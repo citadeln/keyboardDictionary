@@ -43,8 +43,11 @@ style:
 	find . lib tests -name '*.[ch]' | xargs clang-format -n -style=Google
 	find . lib tests -name '*.[ch]' | xargs clang-format -i -style=Google
 
-debug: clean $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(DEBUG_DIR)/$(DEBUG_NAME)
+debug: clean
+	$(CC) $(CFLAGS) $(DEBUG_DIR)/debug.c -o $(DEBUG_DIR)/$(DEBUG_NAME)
+	./$(DEBUG_DIR)/$(DEBUG_NAME)
+# debug: clean $(OBJ)
+# 	$(CC) $(CFLAGS) $(OBJ) -o $(DEBUG_DIR)/$(DEBUG_NAME)
 
 check: val
 	cppcheck --enable=all --suppress=missingIncludeSystem .
