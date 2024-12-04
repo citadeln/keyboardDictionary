@@ -1,6 +1,6 @@
 #define IFDEBUG 0
 
-#if IFDEBUG == 0
+#if IFDEBUG == 1
 
 #include "../keyboardDictionary.h"
 
@@ -12,8 +12,8 @@ bool isChar(char x) {
 }
 
 int main() {
-
-  printf("%d\n%d\n%d\n%d\n%d\n", isChar('s'), isChar('y'), isChar('1'), isChar('a'), isChar('z'));
+  printf("%d\n%d\n%d\n%d\n%d\n", isChar('s'), isChar('y'), isChar('1'),
+         isChar('a'), isChar('z'));
 
   return 0;
 }

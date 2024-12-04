@@ -17,7 +17,7 @@ int main() {
     bool valid = true;
     for (int i = 0; word[i + 1] != '\0'; i++) {
       if ((!areAdjacent(word[i], word[i + 1]) || !isChar(word[i])) &&
-          word[i] != '-' && word[i] != '`') {
+          (word[i] != '-' || word[i] == '`')) {
         valid = false;
         break;
       }
