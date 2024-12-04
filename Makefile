@@ -10,7 +10,7 @@ FRONTEND = gui/
 DEBUG_DIR = debug
 DEBUG_NAME = debug.out
 
-SRC_TEST = tests/test.c
+# SRC_TEST = tests/test.c
 LIBS_TEST = -lcheck -lsubunit -lm -lgcov
 
 SRC = $(shell find $(PREF_SRC) $(FRONTEND) -name '*.c')
@@ -34,11 +34,6 @@ gcov_report: test
 	gcovr -r . --html --html-details -o build/testDictionary.html
 	@xdg-open build/testDictionary.html
 
-
-val: test_build
-	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes $(BUILD_DIR)/$(TEST_NAME)
-	@$(MAKE) clean_all
-
 style:
 	find . lib tests -name '*.[ch]' | xargs clang-format -n -style=Google
 	find . lib tests -name '*.[ch]' | xargs clang-format -i -style=Google
@@ -49,22 +44,12 @@ debug: clean
 # debug: clean $(OBJ)
 # 	$(CC) $(CFLAGS) $(OBJ) -o $(DEBUG_DIR)/$(DEBUG_NAME)
 
-check: val
-	cppcheck --enable=all --suppress=missingIncludeSystem .
-	cp ../materials/linters/.clang-format .
-	find . -name '*.[ch]' | xargs clang-format -n || true
-	rm .clang-format
-	@echo;
+check:
+	cppcheck --enable=all --check-config --suppress=missingIncludeSystem lib/keyboardDictionary.c
 
-clean_gcovr:
-	@rm -f *.gcda *.gcno $(BUILD_DIR)/*.gcda $(BUILD_DIR)/*.gcno $(BUILD_DIR)/$(TEST_NAME)
+val: install
+	valgrind --tool=memcheck --leak-check=yes ./$(TARGET)
 
 clean:
 	rm -rf $(TARGET) $(PREF_OBJ) $(DEBUG_DIR)/$(DEBUG_NAME) build *.gcda *.gcno testDictionary.css testDictionary.html
 	@echo;echo "Clean complete";echo;
-
-# clean: clean_gcovr
-# 	@rm -f $(OBJECTS)/*.o
-# 	@rm -f $(LIB) $(TEST_NAME) $(DEBUG_DIR)/$(DEBUG_NAME) $(TARGET) || true
-# 	@rm -rf ./gcov_report *.html
-# 	@rm -rf $(BUILD_DIR)	
