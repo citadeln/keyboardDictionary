@@ -1,4 +1,4 @@
-#include "keyboardDictionary.h"
+#include "../keyboardDictionary.h"
 
 int main() {
   printf("hello");

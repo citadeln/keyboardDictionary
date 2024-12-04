@@ -1,76 +1,50 @@
-CC=gcc
-CFLAGS=-std=c11 -Wall -Wextra -Werror -g
-BUILD_DIR=./build
-LIB=keyboardDictionary.a
+TARGET = start
+CC = gcc
+CFLAGS = -std=c11 -Wall -Wextra -Werror -g
+GCOVFLAGS = -fprofile-arcs -ftest-coverage
 
-CFILES=$(shell find lib -name '*.c')
-HFILES=$(shell find lib -name '*.h')
-OBJECTS=$(CFILES:%.c=$(BUILD_DIR)/%.o)
+PREF_SRC = ./lib
+PREF_OBJ = ./obj/
+FRONTEND = gui/
 
-TEST_NAME=tests
-TEST_CFILES=$(shell find tests -name '*.c')
-TEST_HFILES=$(shell find tests -name '*.h')
-TEST_FLAGS=$(shell pkg-config --cflags --libs check)
+DEBUG_DIR = debug
+DEBUG_NAME = debug.out
 
-export PATH:=${PATH}:$(shell realpath ~/.local/bin):$(shell pwd)/tests
-GCOV_FLAG=--coverage -lgcov
-GCOV_REPORT=./gcov_report/gcov_report.html
+SRC_TEST = tests/test.c
+LIBS_TEST = -lcheck -lsubunit -lm -lgcov
 
-DEBUG_FLAG=-g
-DEBUG_DIR=debug
-DEBUG_NAME=debug.out
+SRC = $(shell find $(PREF_SRC) $(FRONTEND) -name '*.c')
+OBJ = $(patsubst $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
 
-.PHONY: all test gcov_report clean 
-.PHONY: gcov val check debug clean_gcovr clean_all style val gcovm gcovl testm testl test_build
+$(PREF_OBJ)%.o: $(PREF_SRC)%.c
+	mkdir -p $(dir $@)
+	$(CC) -c $< -o $@
 
-all: $(LIB)
+install: $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
 
-$(LIB): $(OBJECTS)
-	@ar rc $(LIB) $(OBJECTS)
-	@ranlib $(LIB)
-	@echo;
+test: clean 
+	@rm -rf build
+	@mkdir -p build
+	@$(CC) $(CFLAGS) brick_game/tetris/backend.c tests/*.c -L. -L/usr/local/lib -L/usr/include $(GCOVFLAGS) $(LIBS_TEST) -o build/test_dictionary $(EXTRA_FLAG)
+	@build/test_dictionary
 
-$(BUILD_DIR)/%.o: %.c
-	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -c -o $@ $<
+gcov_report: test
+#	~/.local/bin/gcovr
+	gcovr -r . --html --html-details -o build/testDictionary.html
+	@xdg-open build/testDictionary.html
 
-test_build: clean_all $(LIB)
-	@mkdir -p $(BUILD_DIR)
-	@$(CC) $(CFLAGS) $(TEST_CFILES) ./$(LIB) -o $(BUILD_DIR)/$(TEST_NAME) $(TEST_FLAGS)
-
-test: test_build
-	@$(BUILD_DIR)/$(TEST_NAME)
-
-# testl: clean_all $(LIB)
-# 	@mkdir -p $(BUILD_DIR)
-# 	@$(MAKE) test TEST_FLAGS="-lcheck -lsubunit -lm" >/dev/null
-# 	@$(BUILD_DIR)/$(TEST_NAME)
-
-gcov_report:
-	@$(MAKE) test CFLAGS="$(CFLAGS) $(GCOV_FLAG)" >/dev/null
-	@mkdir -p gcov_report
-	@rm -r $(BUILD_DIR)/*_t*.gc?? || true
-	@gcovr --html-details $(GCOV_REPORT) 2>/dev/null || true
-	@gcovr --xml build/cov.xml 2>/dev/null || true
-	@ln -s $(GCOV_REPORT) ./gcov_report.html || true
-	@$(MAKE) clean_gcovr >/dev/null
-	@if [ ! -f $(GCOV_REPORT) ]; then echo;echo "Ошибка. Проверте доступность gcovr.";echo; fi
-	@if [ -f $(GCOV_REPORT) ]; then echo;echo "Отчет сгенерирован в gcov_report.html";echo; fi
-
-gcov: gcov_report
-	@if [ -f $(GCOV_REPORT) ]; then xdg-open $(GCOV_REPORT); fi
-
-# gcovl:
-# 	@$(MAKE) gcov TEST_FLAGS="-lcheck -lsubunit -lm"
-
-# debug: clean_all
-# 	$(MAKE) $(LIB) CFLAGS="$(DEBUG_FLAG)" >/dev/null
-# 	$(CC) $(DEBUG_FLAG) $(DEBUG_DIR)/*.c -L. -l:$(LIB) -o $(DEBUG_DIR)/$(DEBUG_NAME) -lm
-# 	echo;$(DEBUG_DIR)/$(DEBUG_NAME);echo;
 
 val: test_build
 	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes $(BUILD_DIR)/$(TEST_NAME)
 	@$(MAKE) clean_all
+
+style:
+	find . lib tests -name '*.[ch]' | xargs clang-format -n -style=Google
+	find . lib tests -name '*.[ch]' | xargs clang-format -i -style=Google
+
+debug: clean $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(DEBUG_DIR)/$(DEBUG_NAME)
 
 check: val
 	cppcheck --enable=all --suppress=missingIncludeSystem .
@@ -79,16 +53,15 @@ check: val
 	rm .clang-format
 	@echo;
 
-style:
-	find . lib tests -name '*.[ch]' | xargs clang-format -n -style=Google
-	find . lib tests -name '*.[ch]' | xargs clang-format -i -style=Google
-
 clean_gcovr:
 	@rm -f *.gcda *.gcno $(BUILD_DIR)/*.gcda $(BUILD_DIR)/*.gcno $(BUILD_DIR)/$(TEST_NAME)
 
-clean: clean_gcovr
-	@rm -f $(OBJECTS)/*.o
-	@rm -f $(LIB) $(TEST_NAME) $(DEBUG_DIR)/$(DEBUG_NAME) || true
-	@rm -rf ./gcov_report *.html
-	@rm -rf $(BUILD_DIR)
+clean:
+	rm -rf $(TARGET) $(PREF_OBJ) $(DEBUG_DIR)/$(DEBUG_NAME) build *.gcda *.gcno testDictionary.css testDictionary.html
 	@echo;echo "Clean complete";echo;
+
+# clean: clean_gcovr
+# 	@rm -f $(OBJECTS)/*.o
+# 	@rm -f $(LIB) $(TEST_NAME) $(DEBUG_DIR)/$(DEBUG_NAME) $(TARGET) || true
+# 	@rm -rf ./gcov_report *.html
+# 	@rm -rf $(BUILD_DIR)	
