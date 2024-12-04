@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-std=c11 -Wall -Wextra -Werror -g
 BUILD_DIR=./build
-LIB=s21_matrix.a
+LIB=keyboardDictionary.a
 
 CFILES=$(shell find lib -name '*.c')
 HFILES=$(shell find lib -name '*.h')
@@ -63,10 +63,10 @@ gcov: gcov_report
 # gcovl:
 # 	@$(MAKE) gcov TEST_FLAGS="-lcheck -lsubunit -lm"
 
-debug: clean_all
-	$(MAKE) $(LIB) CFLAGS="$(DEBUG_FLAG)" >/dev/null
-	$(CC) $(DEBUG_FLAG) $(DEBUG_DIR)/*.c -L. -l:$(LIB) -o $(DEBUG_DIR)/$(DEBUG_NAME) -lm
-	echo;$(DEBUG_DIR)/$(DEBUG_NAME);echo;
+# debug: clean_all
+# 	$(MAKE) $(LIB) CFLAGS="$(DEBUG_FLAG)" >/dev/null
+# 	$(CC) $(DEBUG_FLAG) $(DEBUG_DIR)/*.c -L. -l:$(LIB) -o $(DEBUG_DIR)/$(DEBUG_NAME) -lm
+# 	echo;$(DEBUG_DIR)/$(DEBUG_NAME);echo;
 
 val: test_build
 	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes $(BUILD_DIR)/$(TEST_NAME)
@@ -80,17 +80,15 @@ check: val
 	@echo;
 
 style:
-	find . -name '*.[ch]' | clang-format -n -style=Google
-	find . -name '*.[ch]' | clang-format -i -style=Google
-	find  -name '*.[ch]' | clang-format -n -style=Google
-	find . -name '*.[ch]' | clang-format -i -style=Google
-	
+	find . lib tests -name '*.[ch]' | xargs clang-format -n -style=Google
+	find . lib tests -name '*.[ch]' | xargs clang-format -i -style=Google
+
 clean_gcovr:
 	@rm -f *.gcda *.gcno $(BUILD_DIR)/*.gcda $(BUILD_DIR)/*.gcno $(BUILD_DIR)/$(TEST_NAME)
 
 clean: clean_gcovr
 	@rm -f $(OBJECTS)/*.o
-	@rm -f $(LIB) $(TEST_NAME) $(DEBUG_DIR)/$(DEBUG_NAME)
+	@rm -f $(LIB) $(TEST_NAME) $(DEBUG_DIR)/$(DEBUG_NAME) || true
 	@rm -rf ./gcov_report *.html
 	@rm -rf $(BUILD_DIR)
 	@echo;echo "Clean complete";echo;
