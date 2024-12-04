@@ -18,7 +18,7 @@ bool areAdjacent(char c1, char c2) {
         if (c2 == keyboard[i][j] || c2 == keyboard[i - 1][j] ||
             c2 == keyboard[i - 1][j + 1] || c2 == keyboard[i][j + 1] ||
             c2 == keyboard[i + 1][j] || c2 == keyboard[i + 1][j - 1] ||
-            c2 == keyboard[i][j - 1])
+            c2 == keyboard[i][j - 1] || c2 == '-')
           result = true;
 
   return result;
@@ -45,9 +45,8 @@ int main() {
         break;
       }
     }
-    if (valid) {
+    if (valid)
       count++;
-    }
   }
 
   // Close the file
