@@ -3,6 +3,7 @@
 // Function to check if two characters are adjacent on a QWERTY keyboard
 bool areAdjacent(char c1, char c2) {
   // Define adjacent key pairs on a QWERTY keyboard
+  bool result = false;
   char keyboard[5][12] = {
       "000000000000", "0qwertyuiop0", "0asdfghjkl00",
       "0zxcvbnm0000", "000000000000",
@@ -12,17 +13,15 @@ bool areAdjacent(char c1, char c2) {
   c2 = tolower(c2);
 
   for (int i = 1; i < 4; i++)
-    for (int j = 0; j < 10; j++) {
-      if (c1 == keyboard[i][j]) {
+    for (int j = 0; j < 10; j++)
+      if (c1 == keyboard[i][j])
         if (c2 == keyboard[i][j] || c2 == keyboard[i - 1][j] ||
             c2 == keyboard[i - 1][j + 1] || c2 == keyboard[i][j + 1] ||
             c2 == keyboard[i + 1][j] || c2 == keyboard[i + 1][j - 1] ||
             c2 == keyboard[i][j - 1])
-          return true;
-      }
-    }
+          result = true;
 
-  return false;
+  return result;
 }
 
 int main() {
