@@ -52,9 +52,7 @@ int main() {
   // Close the file
   fclose(file);
 
-  // Output the count of words that can be typed using adjacent keys
-  printf("Number of English words that can be typed using adjacent keys: %d\n",
-         count);
+  printf("%d\n", count);
 
   return 0;
 }
