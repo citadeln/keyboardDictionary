@@ -49,9 +49,7 @@ int main() {
       count++;
   }
 
-  // Close the file
   fclose(file);
-
   printf("%d\n", count);
 
   return 0;
