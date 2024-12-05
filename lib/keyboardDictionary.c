@@ -55,9 +55,4 @@ bool areAdjacent(char c1, char c2) {
   return result;
 }
 
-bool isChar(char x) {
-  if ((x > 64 && x < 91) || (x > 96 && x < 123))
-    return true;
-  else
-    return false;
-}
+bool isChar(char x) { return ((x > 64 && x < 91) || (x > 96 && x < 123)); }
