@@ -23,10 +23,8 @@ install: $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
 
 test: clean 
-	@rm -rf build
 	@mkdir -p build
-	@$(CC) $(CFLAGS) brick_game/tetris/backend.c tests/*.c -L. -L/usr/local/lib -L/usr/include $(GCOVFLAGS) $(LIBS_TEST) -o build/test_dictionary $(EXTRA_FLAG)
-	@build/test_dictionary
+	@$(CC) $(CFLAGS) lib/keyboardDictionary.c tests/*.c -L. -L/usr/local/lib -L/usr/include $(GCOVFLAGS) $(LIBS_TEST) -o build/test_dictionary --coverage -lgcov
 
 gcov_report: test
 #	~/.local/bin/gcovr
@@ -44,5 +42,5 @@ val: install
 	valgrind --tool=memcheck --leak-check=yes ./$(TARGET)
 
 clean:
-	rm -rf $(TARGET) $(PREF_OBJ) $(DEBUG_DIR)/$(DEBUG_NAME) build *.gcda *.gcno testDictionary.css testDictionary.html
+	@rm -rf $(TARGET) $(PREF_OBJ) $(DEBUG_DIR)/$(DEBUG_NAME) build *.gcda *.gcno testDictionary.css testDictionary.html
 	@echo;echo "Clean complete";echo;
