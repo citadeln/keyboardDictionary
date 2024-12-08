@@ -15,7 +15,7 @@ START_TEST(test_areAdjacent_non_adjacent_keys) {
   ck_assert_int_eq(areAdjacent('a', 'd'), false);
   ck_assert_int_eq(areAdjacent('q', 'e'), false);
   ck_assert_int_eq(areAdjacent('z', 'x'), true);
-  ck_assert_int_eq(areAdjacent('m', 'n'), false);
+  ck_assert_int_eq(areAdjacent('m', 'n'), true);
 }
 
 START_TEST(test_areAdjacent_edge_cases) {
@@ -57,7 +57,6 @@ Suite *keyboard_suite(void) {
 }
 
 int main(void) {
-    printf("qqq");
   int number_failed;
   Suite *s;
   SRunner *sr;

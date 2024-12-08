@@ -10,7 +10,7 @@ FRONTEND = gui/
 DEBUG_DIR = debug
 DEBUG_NAME = debug.out
 
-LIBS_TEST = -lcheck -lsubunit -lm -lgcov
+TESTFLAGS = -lcheck -lsubunit -lm -lgcov --coverage
 
 SRC = $(shell find $(PREF_SRC) $(FRONTEND) -name '*.c')
 OBJ = $(patsubst $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
@@ -24,7 +24,8 @@ install: $(OBJ)
 
 test: clean 
 	@mkdir -p build
-	@$(CC) $(CFLAGS) lib/keyboardDictionary.c tests/*.c -L. -L/usr/local/lib -L/usr/include $(GCOVFLAGS) $(LIBS_TEST) -o build/test_dictionary --coverage -lgcov
+	@$(CC) $(CFLAGS) lib/keyboardDictionary.c tests/*.c -L. -L/usr/local/lib -L/usr/include $(GCOVFLAGS) $(TESTFLAGS) -o build/test_dictionary
+	@./build/test_dictionary
 
 gcov_report: test
 #	~/.local/bin/gcovr

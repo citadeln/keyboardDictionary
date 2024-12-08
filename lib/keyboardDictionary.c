@@ -21,8 +21,9 @@ bool areAdjacent(char c1, char c2) {
         if (c2 == keyboard[i][j] || c2 == keyboard[i - 1][j] ||
             c2 == keyboard[i - 1][j + 1] || c2 == keyboard[i][j + 1] ||
             c2 == keyboard[i + 1][j] || c2 == keyboard[i + 1][j - 1] ||
-            c2 == keyboard[i][j - 1])
-          return true;
+            c2 == keyboard[i][j - 1]) {
+            return true;
+            }
 
   return false;
 }

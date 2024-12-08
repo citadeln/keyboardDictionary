@@ -1,7 +1,6 @@
 #include "../keyboardDictionary.h"
 
 int main() {
-  // Открываем файл с английскими словами
   FILE *file = fopen(FILE_NAME, "r");
   if (file == NULL) {
     printf("Error opening the file.\n");
@@ -14,40 +13,38 @@ int main() {
   int count = 0;
 
   while ((curChar = fgetc(file)) != EOF) {
-    // Игнорируем пробелы
+    // the end of the world
     if (curChar == '\n') {
-      // Проверка на валидность слова
       if (valid && prevChar != '\0') count++;
-      valid = true;  // Сбрасываем для следующего слова
-      prevChar = '\0';  // Сбрасываем предыдущий символ
+      valid = true;
+      prevChar = '\0';
       continue;
     }
 
-    // Приводим к нижнему регистру для удобства сравнения
     curChar = tolower(curChar);
 
-    // Проверяем, является ли текущий символ допустимым
     if (!isValidChar(curChar)) {
-      valid = false;  // Если не допустимый символ, слово недопустимо
-      prevChar = curChar;  // Обновляем предыдущий символ
+      valid = false;
+      prevChar = curChar;
       continue;
     }
 
     switch (prevChar) {
-      case '\0':  // Начало слова
+      // the begin of the world
+      case '\0':
         prevChar = curChar;
         break;
+      // other cases:
       default: {
-        // Проверяем условия для смежных клавиш
         if (!areAdjacent(prevChar, curChar) || !isValidChar(curChar)) {
           valid = false;
         }
-        prevChar = curChar;  // Обновляем предыдущий символ
+        prevChar = curChar;
       }
     }
   }
 
-  // Проверка последнего слова в файле
+  // check the end of the world
   if (valid && prevChar != '\0') count++;
 
   fclose(file);
