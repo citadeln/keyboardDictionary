@@ -1,7 +1,12 @@
 #include "../keyboardDictionary.h"
-// Функция для проверки, являются ли два символа соседними на клавиатуре QWERTY
+
+/**
+ * @brief Check if two characters are adjacent on a QWERTY keyboard
+ *
+ * @param[in] c1 and c2 - characters of the world
+ * @return true if the characters are adjacent, false if they are not adjacent
+ */
 bool areAdjacent(char c1, char c2) {
-  // Определяем позиции клавиш на клавиатуре QWERTY
   char keyboard[5][12] = {
       "000000000000", "0qwertyuiop0", "0asdfghjkl00",
       "0zxcvbnm0000", "000000000000",
@@ -22,5 +27,4 @@ bool areAdjacent(char c1, char c2) {
   return false;
 }
 
-// Функция для проверки, является ли символ буквой или допустимым символом
 bool isValidChar(char x) { return (isalpha(x) || x == '-' || x == '\''); }
