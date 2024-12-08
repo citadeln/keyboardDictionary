@@ -10,7 +10,6 @@ FRONTEND = gui/
 DEBUG_DIR = debug
 DEBUG_NAME = debug.out
 
-# SRC_TEST = tests/test.c
 LIBS_TEST = -lcheck -lsubunit -lm -lgcov
 
 SRC = $(shell find $(PREF_SRC) $(FRONTEND) -name '*.c')
@@ -37,12 +36,6 @@ gcov_report: test
 style:
 	find . lib tests -name '*.[ch]' | xargs clang-format -n -style=Google
 	find . lib tests -name '*.[ch]' | xargs clang-format -i -style=Google
-
-debug: clean
-	$(CC) $(CFLAGS) $(DEBUG_DIR)/debug.c -o $(DEBUG_DIR)/$(DEBUG_NAME)
-	./$(DEBUG_DIR)/$(DEBUG_NAME)
-# debug: clean $(OBJ)
-# 	$(CC) $(CFLAGS) $(OBJ) -o $(DEBUG_DIR)/$(DEBUG_NAME)
 
 check:
 	cppcheck --enable=all --check-config --suppress=missingIncludeSystem lib/keyboardDictionary.c
