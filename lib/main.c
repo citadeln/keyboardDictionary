@@ -44,7 +44,7 @@ int main() {
     }
   }
 
-  // check the end of the world
+  // count++ last world in the all dictionary
   if (valid && prevChar != '\0') count++;
 
   fclose(file);
