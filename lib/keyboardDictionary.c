@@ -7,10 +7,7 @@
  * @return true if the characters are adjacent, false if they are not adjacent
  */
 bool areAdjacent(char c1, char c2) {
-  char keyboard[ROWS_IN_KEYBOARD][COLS_IN_KEYBOARD] = {
-      "000000000000", "0qwertyuiop0", "0asdfghjkl00",
-      "0zxcvbnm0000", "000000000000",
-  };
+  char keyboard[3][10] = {"qwertyuiop", "asdfghjkl", "zxcvbnm"};
 
   c1 = tolower(c1);
   c2 = tolower(c2);
