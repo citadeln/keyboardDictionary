@@ -7,7 +7,7 @@
  * @return true if the characters are adjacent, false if they are not adjacent
  */
 bool areAdjacent(char c1, char c2) {
-  char keyboard[5][12] = {
+  char keyboard[ROWS_IN_KEYBOARD][COLS_IN_KEYBOARD] = {
       "000000000000", "0qwertyuiop0", "0asdfghjkl00",
       "0zxcvbnm0000", "000000000000",
   };
@@ -21,9 +21,8 @@ bool areAdjacent(char c1, char c2) {
         if (c2 == keyboard[i][j] || c2 == keyboard[i - 1][j] ||
             c2 == keyboard[i - 1][j + 1] || c2 == keyboard[i][j + 1] ||
             c2 == keyboard[i + 1][j] || c2 == keyboard[i + 1][j - 1] ||
-            c2 == keyboard[i][j - 1]) {
-            return true;
-            }
+            c2 == keyboard[i][j - 1])
+          return true;
 
   return false;
 }
