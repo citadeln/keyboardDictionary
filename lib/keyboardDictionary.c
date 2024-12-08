@@ -27,4 +27,9 @@ bool areAdjacent(char c1, char c2) {
   return false;
 }
 
+/**
+ * @brief Check the character is alpha or '-' or '\''
+ *
+ * @return true if the characters is valid, false if it is not
+ */
 bool isValidChar(char x) { return (isalpha(x) || x == '-' || x == '\''); }
