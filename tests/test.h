@@ -4,7 +4,7 @@
 #include <check.h>
 #include <stdlib.h>
 
-#include "../keyboardDictionary.h"
+#include "../lib/keyboardDictionary.h"
 
 Suite *keyboard_suite(void);
 

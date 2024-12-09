@@ -10,10 +10,10 @@ FRONTEND = gui/
 DEBUG_DIR = debug
 DEBUG_NAME = debug.out
 
-TESTFLAGS = -lcheck -lsubunit -lm -lgcov --coverage
+TESTFLAGS = -lcheck -lsubunit -lm -lgcov
 
-SRC = $(shell find $(PREF_SRC) $(FRONTEND) -name '*.c')
-OBJ = $(patsubst $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
+SRC = $(shell find main.c $(PREF_SRC) $(FRONTEND) -name '*.c')
+OBJ = $(patsubst %.c $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
 
 $(PREF_OBJ)%.o: $(PREF_SRC)%.c
 	mkdir -p $(dir $@)

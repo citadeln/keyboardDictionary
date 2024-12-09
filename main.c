@@ -1,4 +1,4 @@
-#include "../keyboardDictionary.h"
+#include "lib/keyboardDictionary.h"
 
 int main() {
   FILE *file = fopen(FILE_NAME, "r");
