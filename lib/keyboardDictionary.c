@@ -11,7 +11,7 @@ bool areAdjacent(char c1, char c2) {
       "000000000000", "0qwertyuiop0", "0asdfghjkl00",
       "0zxcvbnm0000", "000000000000",
   };
-  
+
   c1 = tolower(c1);
   c2 = tolower(c2);
 
