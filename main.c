@@ -1,54 +1,87 @@
+#include <stdlib.h>
+#include <pthread.h>
+
 #include "lib/keyboardDictionary.h"
 
-int main() {
-  FILE *file = fopen(FILE_NAME, "r");
-  if (file == NULL) {
-    printf("Error opening the file.\n");
-    return 1;
-  }
+typedef struct {
+    const char* filename;
+    int threadCount;
+} ThreadData;
 
-  char curChar = '\0';
-  char prevChar = '\0';
-  bool valid = true;
-  int count = 0;
-
-  while ((curChar = fgetc(file)) != EOF) {
-    // the end of the world
-    if (curChar == '\n') {
-      if (valid && prevChar != '\0') count++;
-      valid = true;
-      prevChar = '\0';
-      continue;
+void* processFile(void* arg) {
+    ThreadData* data = (ThreadData*)arg;
+    
+    FILE* file = fopen(data->filename, "r");
+    if (file == NULL) {
+        printf("Error opening the file.\n");
+        return NULL;
     }
 
-    curChar = tolower(curChar);
+    char curChar = '\0';
+    char prevChar = '\0';
+    bool valid = true;
+    int count = 0;
 
-    if (!isValidChar(curChar)) {
-      valid = false;
-      prevChar = curChar;
-      continue;
-    }
-
-    switch (prevChar) {
-      // the begin of the world
-      case '\0':
-        prevChar = curChar;
-        break;
-      // other cases:
-      default: {
-        if (!areAdjacent(prevChar, curChar) || !isValidChar(curChar)) {
-          valid = false;
+    while ((curChar = fgetc(file)) != EOF) {
+        if (curChar == '\n') {
+            if (valid && prevChar != '\0') count++;
+            valid = true;
+            prevChar = '\0';
+            continue;
         }
-        prevChar = curChar;
-      }
+
+        curChar = tolower(curChar);
+
+        if (!isValidChar(curChar)) {
+            valid = false;
+            prevChar = curChar;
+            continue;
+        }
+
+        switch (prevChar) {
+            case '\0':
+                prevChar = curChar;
+                break;
+            default: {
+                if (!areAdjacent(prevChar, curChar) || !isValidChar(curChar)) {
+                    valid = false;
+                }
+                prevChar = curChar;
+            }
+        }
     }
-  }
 
-  // count++ last world in the all dictionary
-  if (valid && prevChar != '\0') count++;
+    if (valid && prevChar != '\0') count++;
 
-  fclose(file);
-  printf("%d\n", count);
+    printf("Number of words: %d\n", count);
 
-  return 0;
+    fclose(file);
+
+    return NULL;
+}
+
+int main() {
+    int numCores = 4; // Assume at least 4 cores
+    int numThreads = 1;
+
+    if (numCores >= 4) {
+        numThreads = 4;
+    } else if (numCores >= 2) {
+        numThreads = 2;
+    }
+
+    pthread_t threads[numThreads];
+    ThreadData threadData[numThreads];
+
+    for (int i = 0; i < numThreads; ++i) {
+        threadData[i].filename = FILE_NAME;
+        threadData[i].threadCount = numThreads;
+        pthread_create(&threads[i], NULL, processFile, (void*)&threadData[i]);
+    }
+
+    for (int i = 0; i < numThreads; ++i) {
+        pthread_join(threads[i], NULL);
+    }
+
+    return 0;
 }
