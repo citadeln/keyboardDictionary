@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <pthread.h>
+#include <sys/sysinfo.h>
 
 #include "lib/keyboardDictionary.h"
 
@@ -61,14 +61,14 @@ void* processFile(void* arg) {
 }
 
 int main() {
-    int numCores = 4; // Assume at least 4 cores
-    int numThreads = 1;
+int numCores = get_nprocs(); // Get the number of available cores
+int numThreads = 1;
 
-    if (numCores >= 4) {
-        numThreads = 4;
-    } else if (numCores >= 2) {
-        numThreads = 2;
-    }
+if (numCores >= 4) {
+    numThreads = 4;
+} else if (numCores >= 2) {
+    numThreads = 2;
+}
 
     pthread_t threads[numThreads];
     ThreadData threadData[numThreads];
